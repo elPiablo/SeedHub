@@ -1,0 +1,43 @@
+header {
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 1em;
+    align-items: center;
+  }
+  
+  #metamaskButton {
+    border: 1px solid black;
+    padding: 1em;
+  }
+  
+  button {
+    height: fit-content;
+  }
+  
+  fieldset {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin: .5em 0;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  input {
+    margin-top: .25em;
+  }
+  
+  input[type="submit"] {
+    padding: .5em 1em;
+    background-color: green;
+    width: fit-content;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 600;
+  }
