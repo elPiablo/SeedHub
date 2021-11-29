@@ -24,10 +24,10 @@ if (window.ethereum) {
   // But it would register a click
   connectButton.addEventListener("click", connectUser);
   // And we're saying add it inside the header element
-  header.appendChild(connectButton)-
+  header.appendChild(connectButton)
 
   
-} else {
+ } else {
   // Else if there's no eth provider
   let metamaskButton = document.createElement('a')
   // Create an anchor tag, which will create a link
@@ -92,19 +92,18 @@ form.addEventListener('submit', e => {
     // And try to type out the rest yourself. 
     variety: e.target.seedVariety.value,
     weight: e.target.seedWeightGrams.value
-    // But it can't be in here either because this is an object :thinking
-    // End of our object   
+    // can't be in here as this is an object
   }
-  
-
-
-
-
-
+  console.log(seedData)
 }) 
-
-
-// The reason this will fire back as empty is because it's out of the scope of our function
-
+// this will fire back as empty as it's out of scope of our function
+                                      // ^%$*&^(*^&%(^&%^(&$^&(^(&%(&*^)*&^&*(%)&)*^%)*&^)&*^)(^)^&)       
+                                      // **********@@@@ FUNCTION &*&*& !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // So this is the logic for your form to deposit seeds-- once you get the function for solidity ironed out
-//need to relax or I wont learn, maybe just get lucky, not the same thing
+// Why don't we ask for: window.addEventListener('load', function(event)) {
+
+  // const seedBase = (seedData) => {
+  //       create user class with this.seedName for seedName, 
+  //   this.seedVariety for users seed variety, and this.Weight for the users weight.
+  // } 
+  

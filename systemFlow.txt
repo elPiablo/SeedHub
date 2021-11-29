@@ -1,0 +1,103 @@
+
+Eventually some aspects would be season/time and typical user dependent, but let's not go there now.
+
+Considerations:
+
+remember that we'll need a way to eliminate and malicious callers/contracts
+
+also fallback functions?
+
+reverts or asserts as well as:
+......require modifiers
+
+n.b.
+:colon: may also mean :ratio:
+
+INPUT DATA RELATED:
+USER:
+3 inputs: type, variety, weight in grams => that's it
+OWNER:
+user info: add, remove, make +/-tx with user; supply 
+user with xTokens (10 maybe??)
+seed data info: new variety, all params 
+(re)set algorithms  e.g. max/min volumes
+for seed volumes, token value:seed payments
+user deposit/withdrawl:stock allowances
+
+USER RELATED
+make sure user exists != require "user applies for KYC"
+
+NEW SEED RELATED
+make sure new seed object type is created and added to system
+what do we call this object; how do we store; and access it?
+(who and how can we have this info populated?? Owner, not user??)
+
+DEPOSIT RELATED:
+make sure the user seed gets deposited in system
+check deposit weight against maximum stock volume
+revert if true
+
+require that deposit weight does not exceed 
+(x% (maximumSeedBalance - presentSeedBalance)) (i.e. no dumping)
+OR WHAT IS THE most efficient way to tell the user to input an
+amount that's going to be accepted (as opposed to trying and
+trying until a deposit/withdrawl is accepted.
+
+
+WITHDRAWL RELATED:
+make sure seed type is registered in system
+check withdrawl against minimum stock volume
+check percentage of request compared to stock volume
+require that request weight is not more than x% of minimumSeedBalance 
+minus presentSeedBalance  (i.e. no plundering)+
+
+ALGORITHMS:
+SeedBank Balance allowances:
+allowed userSeedDeposit = maxStockLimit - balanceGrams / 10 
+e.g. (25000 - 14000) / 10 = 1100
+allowed userSeedWithdrawl = minStockLimit - balanceGrams / 10 
+e.g. (10000 - 8700) / 10 = 130
+
+PAYMENT RELATED:
+maxStockLimit - minStockLimit 
+max-min = possible variation = available value of tokens for pool
+13000-3000 = 10000 = 10 tokens i.e. 1 token per kilo.
+
+Uniswap V1 algo x * y = k
+
+
+
+
+
+
+welcome screen: three possibilities: { check new user, depositer, withdrawer }
+
+I don't think we need to concern ourselves with setting up a new Metamask account
+
+function: check and add  new user if 'require' modifier fails
+emit event: new user creation successful
+
+function: deposit seeds
+update seedbank balance
+calculate token allowance for caller
+hold callers token allowance to other contract for execution
+emit event: seed type and quantity deposited, payment on hold notice, caller's new balance 
+
+function: withdraw seeds
+update seedbank allowance
+calculate token allowance for caller
+deduct callers tokens
+emit event: seed type and quantity withdrawn, caller's new balance
+
+ 
+
+
+
+
+
+
+
+
+
+
+
