@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/elPiablo/SeedHub/issues"
   },
-  "homepage": "https://github.com/elPiablo/SeedHub#readme"
+  "homepage": "https://github.com/elPiablo/SeedHub#readme",
+  "dependencies": {
+    "unix-timestamp": "^0.2.0"
+  }
 }
