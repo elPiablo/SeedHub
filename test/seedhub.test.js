@@ -30,4 +30,15 @@ contract("SeedHub", function (accounts) {
       })
     })
 
+
+    describe("Add User", () => {
+      it("should successfully add a new user to verified users", async () => {
+        await instance.addUser(user, tokenBalance);
+
+        const user = await instance.fetchuserBase();
+
+        assert(user.length === 1, "user didn't show up after all")
+      })
+    })
+
   });

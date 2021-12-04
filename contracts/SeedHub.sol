@@ -5,8 +5,20 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 // import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract SeedHub is Ownable {
-  mapping(address => SeedLot[]) public userSeedLots;
 
+  event NewUserAdded(address NewUser, uint userTokenBalance);
+  
+  // uint public userLotId; % 1000000
+  // address user;
+
+  // mapping (address => SeedLot) userSeedLots;
+  
+  // mapping for all registered users
+  mapping(address => bool) public verifiedUsers;
+  mapping(address => UserInfo[]) public userBase;
+  UserInfo[] public usersBase;
+
+  mapping(address => SeedLot[]) public userSeedLots;
   SeedLot[] public seedLots;
 
   // Still want a token balance of the user
@@ -25,7 +37,29 @@ contract SeedHub is Ownable {
       address user;
       uint tokenBalance;
   }
+  
+  modifier verifiedUser(address _user) {
+    require(verifiedUsers[msg.sender] == true, "Caught, mister. We pinpoint potential trouble-makers...And neutralize them!");
+    _;
+  }
 
+  function addUser(address _user, uint _tokenBalance) internal onlyOwner returns(bool) { 
+      UserInfo memory userInfo = UserInfo ({
+        user: _user,
+        tokenBalance: _tokenBalance
+      });
+      usersBase.push(userInfo);
+      verifiedUsers[_user] = true;
+      emit NewUserAdded(_user, _tokenBalance);
+      return verifiedUsers[_user];
+        
+  } 
+    // 
+  function fetchUserBase() external view returns (UserInfo[] memory) {
+    return usersBase;
+  }
+  
+  // see code way futher down for setting expiry date
   function addSeed(
     uint _shelfLife,
     uint _lotGrams,
@@ -42,16 +76,35 @@ contract SeedHub is Ownable {
       variety: _variety,
       owner: msg.sender
     });
-
+    
     seedLots.push(seedLot);
-
     userSeedLots[msg.sender].push(seedLot);
   }
+
   function fetchSeedLots() external view returns (SeedLot[] memory) {
     return seedLots;
 }
 
+  // function fetchSeedLots(address _owner) external view returns (SeedLot[] memory) {
+  //   SeedLot[] memory result = new SeedLot[](userSeedLots[_owner]);
+  //   uint counter = 0;
+  //   for (uint i = 0; i < seedLots.length; i++) {
+  //     if (userSeedLots[i] == _owner) {
+  //       result[counter] = i; 
+  //       counter++;
+  //     }
+  //   }
+  //   return result;
+  // }
 }
+  // Don't I need this constructor function???
+  // Or does this run automatically in the other contract?
+  // constructor() public Ownable() {} 
+ 
+  // function addNewUser(address _user)
+  //      public onlyOwner {
+  //      userBase[_user] = true;
+  // }
 // pragma solidity >=0.4.22 <0.9.0;
 
 // // import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -77,7 +130,7 @@ contract SeedHub is Ownable {
 //     // address public user;
 //     // string public seedClass;
 
-//     // mapping(uint => bool) internal newVarieties; // confirm variety is added, though maybe can check with "" => bool in an array???
+//     // mapping(uint => bool) internal newVarieties; // confirm variety is added, though maybe can loop and check with "" => bool in an array???
 //     // mapping(address => bool) internal userBase; // precondition:  validated suppliers mapping/user must be verified. We can check through this
 //     mapping(address => uint16) private lots; // to track user activity. This doesn't wotk, I think
 //     mapping (address => uint) public accountBalance; // to track all users' balances
@@ -87,7 +140,7 @@ contract SeedHub is Ownable {
 //     // mapping(string => (string => Seed)) classVarieties;  need to can do this in one fail swoop
 //     // string public variety;
 //     mapping(string => Seed) varieties;
-//    // so below is an array should let us store variety in a cliass set. I know this is wrong but it;s a start
+//    // so below is an array should let us store variety in a class set. I know this is wrong but it's a start
 //     Seed[] public VarietySets;
 //     // SeedClass[] public VarietySets; above array should be this
 //     SeedBank[] public ClassSets;
@@ -125,7 +178,7 @@ contract SeedHub is Ownable {
 //         address _address;
 //     }
 
-//     // we need to can map to user's lots/activity
+//     // we need a way to map to user's lots/activity
 //     // we can't have an endless database of userLots on chain!!!
 //     struct UserInfo {
 //         address user;
@@ -134,32 +187,32 @@ contract SeedHub is Ownable {
 
 //     event NewVariety(string indexed message);
 
-//     //  modifier knowYourSupplier(address) owner {
-//         // require(user is in registered/check with Dina) 
-//     //         _;
-//     //    }
+//      modifier knowYourSupplier(address) owner {
+//         require(userBase[msg.sender] != 0, "go and sort some KYC out, dickhead"); 
+//             _;
+//        }
     
-//     // modifier noTakeThePiss() {
-//     //     require(user hasnt deposited =< six months);
-//     //     _;
-//     // } 
-//     // modifier noGLut(lotGrams) owner {
-//     //     require(lotGrams =< ((maxStockLimit - balanceGrams) / 10);
-//     //     _;
-//     // } 
+//     modifier dontTakeThePiss() {
+//         require(user hasnt deposited =< six months);
+//         _;
+//     } 
+//     modifier noGLut(lotGrams) owner {
+//         require(lotGrams =< ((maxStockLimit - balanceGrams) / 10);
+//         _;
+//     } 
 
-//     //  modifier noPlunder(lotGrams) owner {
-//     //     require(lotGrams =< ((minStockLimit - balanceGrams) / 10);
-//     //     _;
-//     // } 
+//      modifier noPlunder(lotGrams) owner {
+//         require(lotGrams =< ((minStockLimit - balanceGrams) / 10);
+//         _;
+//     } 
 
-//     // modifier userKYCed(user) {
-//     //     require(userBase.address == true, "Please apply for KYC through admin");
-//     //     _;
-//     // } 
+//     modifier userKYCed(user) {
+//         require(userBase.address == true, "Please apply for KYC through admin");
+//         _;
+//     } 
  
-//      /// the addNewSeed function is called by contract owner(s i.e. evt multisig) only
-//     /// so do we probably do not need an address as a param
+//      / the addNewSeed function is called by contract owner(s i.e. evt multisig) only
+//     / so do we probably do not need an address as a param
 //     function setNewSeed(
 //         uint16 _shelflife,
 //         uint16 _gramToTokenValue,
@@ -192,8 +245,8 @@ contract SeedHub is Ownable {
 
 //         }
 //     /// not sure what the following function is for anymore
-    // function getVarietySets() public view returns(Seed[] memory) {
-    //     return VarietySets;
+//     function getVarietySets() public view returns(Seed[] memory) {
+//         return VarietySets;
     
 //     }
     
@@ -237,10 +290,17 @@ contract SeedHub is Ownable {
 //             // return (now >= registerDep + _numWeeks)
 	
 // 	// }
+// uint lastUpdated;
 
-
+// // Set `lastUpdated` to `now`
+// function updateTimestamp() public {
+//   lastUpdated = now;
 // }
 
+// // Will return `true` if 5 minutes have passed since `updateTimestamp` was 
+// // called, `false` if 5 minutes have not passed
+// function fiveMinutesHavePassed() public view returns (bool) {
+//   return (now >= (lastUpdated + 5 minutes));
+// }
 
-
-
+// }
