@@ -1,4 +1,14 @@
+  // test that the owner IS actually the owner!!
+  // test that tokens can't be stolen!!!!
+  // test that user is verified
+  // test that deposit amount does not exceed maximum deposit
+  // test that withdrawl amount does not exceed maximum withdrawl
+  // test that payment is successfull
+  // test that user/or other external contract can't invoke addSeed function
+  // test that user/other external contract can't invoke addUser function
+  // test that expiry date is not less than shelf life minus now/block.timestamp
 
+// converts num, string, HEX string => returns an object BNjs instance
 let BN = web3.utils.BN;
 let SeedHub = artifacts.require("SeedHub");
 const timestamp = require("unix-timestamp");
@@ -12,7 +22,10 @@ contract("SeedHub", function (accounts) {
     const expiryDate = timestamp.fromDate("2030-12-31");
     const seedClass = "lampshade";
     const variety = "standing";
-   
+    
+    // const tokenBalance = 26; 
+    // const user = 
+
     let instance;
     
 
@@ -35,9 +48,9 @@ contract("SeedHub", function (accounts) {
       it("should successfully add a new user to verified users", async () => {
         await instance.addUser(user, tokenBalance);
 
-        const user = await instance.fetchuserBase();
+        const user = await instance.fetchUserBase();
 
-        assert(user.length === 1, "user didn't show up after all")
+        assert(user.length === 1, "user didn't show up after all");
       })
     })
 

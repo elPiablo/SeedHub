@@ -14,13 +14,13 @@ contract SeedHub is Ownable {
   // differentiates owner's (deployer) address from message sender(user)
   // address owner = _owner;
   // differentiates user from owner
-  address user;
-  // mapping so our functions verify if user exists otherwise we send them to contract owner
+  // address public user;
+  // mapping so our functions can verify if user exists otherwise we send them to contract owner
   mapping(address => bool) public verifiedUsers;
   // mapping lets functions access user to their token balance/seedLots
   mapping(address => UserInfo[]) public userBase;
   //array to store ALL users' structs. There must be an efficient method. This isn't it.. 
-  UserInfo[] public usersBase;
+  UserInfo[] public usersInfo;
   //mapping user to seedLots they have. Again, we can tighten all of this by reorganising struct members
   mapping(address => SeedLot[]) public userSeedLots;
   //array of all seedLot structs. 
@@ -28,6 +28,8 @@ contract SeedHub is Ownable {
   // we need an data structure to store i)varieties ii)seedClasses
   //(nested array?? but this is so potentially storage consuming and gas intensive 
   // to push/shift to keep storage at a minimum)
+
+// @ dev GET ALL STRINGS TURNED TO BYTES
   
   // struct with all info about a deposit
   // Still want a token balance of the user
@@ -43,6 +45,7 @@ contract SeedHub is Ownable {
 
   // struct keeps track of user activity (need a data structure e.g. array) which we 
   // still need to add, although we could do address/balance in a mapping
+  // we should call it !!!!!!~~~~USER LOT~~~!!!!!!
   // We're going to KYC the user
   struct UserInfo {
       address user;
@@ -52,22 +55,40 @@ contract SeedHub is Ownable {
   // @notice function to let user deposit seeds and get paid tokens
   // @params lotGram(weight of user deposit), seedClass, variety (of said seedClass)
   // @params newTokenBalance (updated user token balance) 
+  // @params need verifiedUser modifier
   // @dev add 3 param values to SeedLot and push to seedLots array
-  // // @dev map caller address
-  function userDeposit(uint _lotGram, string memory _seedClass, string memory _variety)
-    public verifiedUser returns (uint _newTokenBalance) 
-     getter function fetchSeedLots is already called below
-     SeedLot _pointer = etc etc
-     SeedBank Balance allowances:
-     allowed userSeedDeposit = maxStockLimit - balanceGrams / 10 
-     e.g. (25000 - 14000) / 10 = 1100 
-     need to add three values to a struct of 6 values from msg.sender
-     _pointer._lotGram
-     _pointer._seedclass etc etc
-     reentrancy: do following in correct order
-     work out user's payment and transfer msg.value to their account
-     update their struct with new tokenBalance;  
+  // @dev map caller address 
+  // @dev call payment transfer function
+  // function userDeposit(uint _lotGram, string memory _seedClass, string memory _variety)
+  //   public payable verifiedUser returns (uint _newTokenBalance) 
+  //    getter function fetchSeedLots is already called below
+  //    require(allowed userSeedDeposit = maxStockLimit - balanceGrams / 10 
+  //    e.g. (25000 - 14000) / 10 = 1100 
+  //    SeedLot _pointer = addToLot {
+  //    need to add 3 values to a struct of 6 values from msg.sender
+  //    _pointer._lotGram
+  //    _pointer._seedclass etc etc
+  //    }
+  //    reentrancy: do following in correct order
+  //    work out user's payment and transfer msg.value to their account
+  //    from owner (I guess this is possibily an easy way??)
+  //    update their struct with new tokenBalance;  
+  //    push addToLot to UserInfo struct
+  //    emit depositSuccess(newTokenBalance, _lotGram, _seedClass, variety)
+  //    move up => event  depositSuccess(uint newTokenBalance, uint _lotGram, string indexed _seedClass, string indexed _variety)
+
+  // @notice user withdraws seedLot and tokens are deducted from their balance
+  // @params lotGram(weight of user deposit), seedClass, variety (of said seedClass)
+  // @params newTokenBalance (updated user token balance) 
+  // @params need verifiedUser modifier
+  // @dev grab appropriate SeedLot, update above 3 params, and deduct tokens from user balance
+  // @dev call payment transfer function
+  // function userWithdraw(uint _lotGram, string memory _seedClass, string memory _variety) 
+  //   public payable verifiedUser returns (uint _newTokenBalance) 
+
+
     
+
 
 
   
@@ -82,21 +103,21 @@ contract SeedHub is Ownable {
   // @params add new user and newly allocated tokens to userInfo struct
   // and usersBase array, accessible through userBase mapping (careful of spellings)
   // returns bool for verifiedUser mapping to be used with verifiedUser modifier
-  function addUser(address _user, uint _tokenBalance) internal onlyOwner returns(bool) { 
-      UserInfo memory userInfo = UserInfo ({
+  function addUser(address _user, uint _tokenBalance) external onlyOwner returns(bool) { 
+      UserInfo memory newUser = UserInfo ({
         user: _user,
         tokenBalance: _tokenBalance
       });
-      usersBase.push(userInfo);
+      usersInfo.push(newUser);
       verifiedUsers[_user] = true;
       // emit NewUserAdded(_user, _tokenBalance);
-      return verifiedUsers[_user];
+      return verifiedUsers[_user] = true;
   } 
   
   // @notice view getter function to grab userBase for setter addUser() function above 
   // @params allows UserInfo[] struct cos it's memory, not storage
   function fetchUserBase() external view returns (UserInfo[] memory) {
-    return usersBase;
+     return usersInfo;
   }
     
   // @notice so onlyOwner can add a new seedLot to seedLots array  
@@ -108,15 +129,14 @@ contract SeedHub is Ownable {
   // @dev maps 'caller' address to this seedLot in userSeedLots mapping
   // see code way futher down for setting expiry date
   
-  // SHOULD BE ONLY OWNDER FUNCTION!!!!!!!
-  
+  // SHOULD BE ONLY OWNDER FUNCTION!!!!!!! or is it not cos 'owner' is function call from 'Ownable.sol'??
   function addSeed(
     uint _shelfLife,
     uint _lotGrams,
     uint _expiryDate,
     string memory _seedClass,
     string memory _variety
-  ) internal onlyOwner {
+  ) external onlyOwner {
 
     SeedLot memory seedLot = SeedLot({
       shelfLife: _shelfLife,
@@ -136,11 +156,12 @@ contract SeedHub is Ownable {
   function fetchSeedLots() external view returns (SeedLot[] memory) {
     return seedLots;
 }
+  
 }
 
 // @notice altenative to above fetchSeedLots getter. 
 // @notice Apparantly the following view getter function lets us  
-// @dev build and loop over an array in memory which is intensive but gas cheap
+// @dev build and loop over an array in memory which is compute intensive but gas cheap
 // @dev and doesn't involve  unneeded storage to blockchain. It needs work
 // function fetchSeedLots(address _owner) external view returns (SeedLot[] memory) {
 //   SeedLot[] memory result = new SeedLot[](userSeedLots[_owner]);
@@ -158,7 +179,7 @@ contract SeedHub is Ownable {
 // @params lotGram(user's weight deposit)
 // @dev checks lotGram against the below stockLimit algorithm
 //     modifier noGLut(lotGrams) owner {
-//         require(lotGrams =< ((maxStockLimit - balanceGrams) / 10);
+//         require(lotGrams =< ((maxStockLimit - balanceGrams) / depositDivisorArg e.g.  10);
 //         _;
 //     } 
 
@@ -166,14 +187,15 @@ contract SeedHub is Ownable {
 // @params lotGram(user's weight withdrawl)
 // @dev checks lotGram againnst below stockLimit algorithm      
 // modifier noPlunder(lotGrams) owner {
-//         require(lotGrams =< ((minStockLimit - balanceGrams) / 10);
+//         require(lotGrams =< ((minStockLimit - balanceGrams) / depositDivisorArg e.g. 10);
 //         _;
 //     } 
 
 // @notice modifier for user deposit function
 // @dev puts a timelock restriction on user deposit frequency
 //   modifier dontTakeThePiss() {
-//         require(user hasnt deposited =< six months);
+//         require(user hasnt deposited =< time period against weight of previous deposits
+//            like coolOffPeriod in cryptozombies);
 //         _;
 //   } 
 
@@ -280,7 +302,7 @@ contract SeedHub is Ownable {
 //     public
 //     // internal 
 //     returns (bool) 
-{
+// {
     // data locattion must be storage, calldata or memory, otherwise it yells
 //     Seed storage newVariety = varieties[_variety];
             
