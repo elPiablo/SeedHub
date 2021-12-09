@@ -7,6 +7,7 @@
   // test that user/or other external contract can't invoke addSeed function
   // test that user/other external contract can't invoke addUser function
   // test that expiry date is not less than shelf life minus now/block.timestamp
+// USE EVENTS OR DEBUGGER to sort of CONSOLE LOG stuff
 
 // converts num, string, HEX string => returns an object BNjs instance
 let BN = web3.utils.BN;
@@ -14,6 +15,11 @@ let SeedHub = artifacts.require("SeedHub");
 const timestamp = require("unix-timestamp");
 
 contract("SeedHub", function (accounts) {
+  it("should assert true. Contract deployed successfully", async () => {
+      await SeedHub.deployed();
+      return assert.isTrue(true);
+  });
+
   const [_owner, user] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
   
@@ -22,12 +28,8 @@ contract("SeedHub", function (accounts) {
     const expiryDate = timestamp.fromDate("2030-12-31");
     const seedClass = "lampshade";
     const variety = "standing";
-    
-    // const tokenBalance = 26; 
-    // const user = 
-
+    const tokenBalance = 26; 
     let instance;
-    
 
   beforeEach(async () => {
     instance = await SeedHub.new();
@@ -35,14 +37,13 @@ contract("SeedHub", function (accounts) {
 
     describe("Add seed", () => {
       it("should successfully add a seed", async () => {
-        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety, { from: user });
+        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety, { from: user } ); /*, { from: user });*/
 
         const seed = await instance.fetchSeedLots();
 
         assert(seed.length === 1, "seed wasn't added");
       })
     })
-
 
     describe("Add User", () => {
       it("should successfully add a new user to verified users", async () => {

@@ -14,7 +14,7 @@ contract SeedHub is Ownable {
   // differentiates owner's (deployer) address from message sender(user)
   // address owner = _owner;
   // differentiates user from owner
-  // address public user;
+  // address user = msg.sender;
   // mapping so our functions can verify if user exists otherwise we send them to contract owner
   mapping(address => bool) public verifiedUsers;
   // mapping lets functions access user to their token balance/seedLots
@@ -94,10 +94,10 @@ contract SeedHub is Ownable {
   
   // modifier checks if user is in verifiedUsers mapping to 
   // restrict user access to only some functions 
-  modifier verifiedUser(address _user) {
-    require(verifiedUsers[msg.sender] == true, "Caught, mister. We pinpoint potential trouble-makers...And neutralize them!");
-    _;
-  }
+  // modifier verifiedUser(address _user) {
+  //   require(verifiedUsers[msg.sender] == true, "Caught, mister. We pinpoint potential trouble-makers...And neutralize them!");
+  //   _;
+  // }
 
      // @notice internal function called by onlyOwner to add new user 
   // @params add new user and newly allocated tokens to userInfo struct
@@ -108,7 +108,7 @@ contract SeedHub is Ownable {
         user: _user,
         tokenBalance: _tokenBalance
       });
-      usersInfo.push(newUser);
+      usersInfo[_user].push(newUser);
       verifiedUsers[_user] = true;
       // emit NewUserAdded(_user, _tokenBalance);
       return verifiedUsers[_user] = true;
@@ -136,7 +136,7 @@ contract SeedHub is Ownable {
     uint _expiryDate,
     string memory _seedClass,
     string memory _variety
-  ) external onlyOwner {
+  ) external {
 
     SeedLot memory seedLot = SeedLot({
       shelfLife: _shelfLife,
