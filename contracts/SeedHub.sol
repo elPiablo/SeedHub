@@ -17,9 +17,9 @@ contract SeedHub is Ownable {
   // address user = msg.sender;
   
   // mapping so our functions can verify if user exists otherwise we send them to contract owner
-  // mapping(address => bool) public verifiedUsers;
+  mapping(address => bool) public verifiedUsers;
   // mapping lets functions access user to their token balance/seedLots
-  // mapping(address => UserInfo) public userBase;
+  mapping(address => UserInfo) public userBase;
   //array to store ALL users' structs. There must be an efficient method. This isn't it.. 
   UserInfo[] public usersInfo;
   //mapping user to seedLots they have. Again, we can tighten all of this by reorganising struct members
@@ -49,7 +49,7 @@ contract SeedHub is Ownable {
   // we should call it !!!!!!~~~~USER LOT~~~!!!!!!
   // We're going to KYC the user
   struct UserInfo {
-      // address user;
+      address user;
       uint tokenBalance;
   }
   
@@ -104,16 +104,16 @@ contract SeedHub is Ownable {
   // @params add new user and newly allocated tokens to userInfo struct
   // and usersBase array, accessible through userBase mapping (careful of spellings)
   // returns bool for verifiedUser mapping to be used with verifiedUser modifier
-  function addUser(uint _tokenBalance) external onlyOwner { 
+  function addUser(address _user, uint _tokenBalance) external onlyOwner returns(bool) { 
       UserInfo memory newUser = UserInfo ({
-        // user: _user,
+        user: _user,
         tokenBalance: _tokenBalance
       });
       usersInfo.push(newUser);
       
       // verifiedUsers[_user] = true;
       // emit NewUserAdded(_user, _tokenBalance);
-      // return verifiedUsers[_user] = true;
+      return verifiedUsers[_user] = true;
   } 
   
 // function addUser(address _newuser) public onlyOwner {

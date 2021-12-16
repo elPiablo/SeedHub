@@ -38,7 +38,7 @@ contract("SeedHub", function (accounts) {
 
     describe("Add seed", () => {
       it("should successfully add a seed", async () => {
-        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety); /*, { from: user });*/
+        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety); /*, { from: owner });*/
 
         const seed = await instance.fetchSeedLots();
 
@@ -48,7 +48,7 @@ contract("SeedHub", function (accounts) {
 
     describe("Add User", () => {
       it("should successfully add a new user to verified users", async () => {
-        await instance.addUser(tokenBalance);
+        await instance.addUser(user, tokenBalance);
 
         const user = await instance.fetchUserBase();
 
@@ -56,14 +56,6 @@ contract("SeedHub", function (accounts) {
       })
     })
 
-  // describe("Add User", () => {
-  //     it("should successfully add a new user to verified users", async () => {
-  //       await instance.addUser(_newuser);
 
-  //       const user = await instance.fetchUserBase();
-
-  //       assert(user.length === 1, "user didn't show up after all");
-  //     })
-    // })
 
   });
