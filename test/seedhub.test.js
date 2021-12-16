@@ -20,7 +20,7 @@ contract("SeedHub", function (accounts) {
       return assert.isTrue(true);
   });
 
-  const [_owner, user] = accounts;
+  const [_owner, _user] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
   
     const shelfLife = 200;
@@ -29,6 +29,7 @@ contract("SeedHub", function (accounts) {
     const seedClass = "lampshade";
     const variety = "standing";
     const tokenBalance = 26; 
+    // let user;
     let instance;
 
   beforeEach(async () => {
@@ -37,7 +38,7 @@ contract("SeedHub", function (accounts) {
 
     describe("Add seed", () => {
       it("should successfully add a seed", async () => {
-        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety, { from: user } ); /*, { from: user });*/
+        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety); /*, { from: user });*/
 
         const seed = await instance.fetchSeedLots();
 
@@ -47,12 +48,22 @@ contract("SeedHub", function (accounts) {
 
     describe("Add User", () => {
       it("should successfully add a new user to verified users", async () => {
-        await instance.addUser(user, tokenBalance);
+        await instance.addUser(tokenBalance);
 
         const user = await instance.fetchUserBase();
 
         assert(user.length === 1, "user didn't show up after all");
       })
     })
+
+  // describe("Add User", () => {
+  //     it("should successfully add a new user to verified users", async () => {
+  //       await instance.addUser(_newuser);
+
+  //       const user = await instance.fetchUserBase();
+
+  //       assert(user.length === 1, "user didn't show up after all");
+  //     })
+    // })
 
   });

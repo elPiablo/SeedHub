@@ -12,13 +12,14 @@ contract SeedHub is Ownable {
   // uint public userLotId; % 1000000
   
   // differentiates owner's (deployer) address from message sender(user)
-  // address owner = _owner;
+  // address owner; this is already declared in Ownable.sol
   // differentiates user from owner
   // address user = msg.sender;
+  
   // mapping so our functions can verify if user exists otherwise we send them to contract owner
-  mapping(address => bool) public verifiedUsers;
+  // mapping(address => bool) public verifiedUsers;
   // mapping lets functions access user to their token balance/seedLots
-  mapping(address => UserInfo[]) public userBase;
+  // mapping(address => UserInfo) public userBase;
   //array to store ALL users' structs. There must be an efficient method. This isn't it.. 
   UserInfo[] public usersInfo;
   //mapping user to seedLots they have. Again, we can tighten all of this by reorganising struct members
@@ -40,7 +41,7 @@ contract SeedHub is Ownable {
     uint expiryDate;
     string seedClass;
     string variety;
-    address owner;
+    // address owner;
   }
 
   // struct keeps track of user activity (need a data structure e.g. array) which we 
@@ -48,7 +49,7 @@ contract SeedHub is Ownable {
   // we should call it !!!!!!~~~~USER LOT~~~!!!!!!
   // We're going to KYC the user
   struct UserInfo {
-      address user;
+      // address user;
       uint tokenBalance;
   }
   
@@ -103,17 +104,22 @@ contract SeedHub is Ownable {
   // @params add new user and newly allocated tokens to userInfo struct
   // and usersBase array, accessible through userBase mapping (careful of spellings)
   // returns bool for verifiedUser mapping to be used with verifiedUser modifier
-  function addUser(address _user, uint _tokenBalance) external onlyOwner returns(bool) { 
+  function addUser(uint _tokenBalance) external onlyOwner { 
       UserInfo memory newUser = UserInfo ({
-        user: _user,
+        // user: _user,
         tokenBalance: _tokenBalance
       });
-      usersInfo[_user].push(newUser);
-      verifiedUsers[_user] = true;
+      usersInfo.push(newUser);
+      
+      // verifiedUsers[_user] = true;
       // emit NewUserAdded(_user, _tokenBalance);
-      return verifiedUsers[_user] = true;
+      // return verifiedUsers[_user] = true;
   } 
   
+// function addUser(address _newuser) public onlyOwner {
+//   verifiedUsers[_newuser] = true;
+// }
+
   // @notice view getter function to grab userBase for setter addUser() function above 
   // @params allows UserInfo[] struct cos it's memory, not storage
   function fetchUserBase() external view returns (UserInfo[] memory) {
@@ -128,27 +134,26 @@ contract SeedHub is Ownable {
   // @dev puses new seedLot struct to seedLots array
   // @dev maps 'caller' address to this seedLot in userSeedLots mapping
   // see code way futher down for setting expiry date
-  
-  // SHOULD BE ONLY OWNDER FUNCTION!!!!!!! or is it not cos 'owner' is function call from 'Ownable.sol'??
+   // SHOULD BE ONLY OWNDER FUNCTION!!!!!!! or is it not cos 'owner' is function call from 'Ownable.sol'??
   function addSeed(
     uint _shelfLife,
     uint _lotGrams,
     uint _expiryDate,
     string memory _seedClass,
     string memory _variety
-  ) external {
+  ) external onlyOwner {
 
     SeedLot memory seedLot = SeedLot({
       shelfLife: _shelfLife,
       lotGrams: _lotGrams,
       expiryDate: _expiryDate,
       seedClass: _seedClass,
-      variety: _variety,
-      owner: msg.sender
+      variety: _variety
+      // owner: msg.sender
     });
     
     seedLots.push(seedLot);
-    userSeedLots[msg.sender].push(seedLot);
+    // userSeedLots[msg.sender].push(seedLot);
   }
 
   // @notice getter function to grab a SeedLot[] struct so we can put it in seedLots array
