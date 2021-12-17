@@ -20,7 +20,7 @@ contract("SeedHub", function (accounts) {
       return assert.isTrue(true);
   });
 
-  const [_owner, _user] = accounts;
+  const [owner, newbie] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
   
     const shelfLife = 200;
@@ -29,7 +29,6 @@ contract("SeedHub", function (accounts) {
     const seedClass = "lampshade";
     const variety = "standing";
     const tokenBalance = 26; 
-    // let user;
     let instance;
 
   beforeEach(async () => {
@@ -48,8 +47,8 @@ contract("SeedHub", function (accounts) {
 
     describe("Add User", () => {
       it("should successfully add a new user to verified users", async () => {
-        await instance.addUser(user, tokenBalance);
-
+        // await instance.addUser(accounts[2], tokenBalance); this also works with  no other changes
+        await instance.addUser(newbie, tokenBalance);
         const user = await instance.fetchUserBase();
 
         assert(user.length === 1, "user didn't show up after all");
