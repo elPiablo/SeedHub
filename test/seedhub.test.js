@@ -20,6 +20,11 @@ contract("SeedHub", function (accounts) {
       return assert.isTrue(true);
   });
 
+   it("should confirm inheritance from Ownable.sol creating SeedHub owner", async () => {
+      await instance.owner(), owner;  // how on earth can it leave owner unwrapped like this???
+      return assert.strictEqual();
+  });
+
   const [owner, newbie] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
   
@@ -36,8 +41,9 @@ contract("SeedHub", function (accounts) {
   });
 
     describe("Add seed", () => {
-      it("should successfully add a seed", async () => {
-        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety); /*, { from: owner });*/
+      it("owner should successfully add a seed", async () => {
+        // I'm dubious about how easily we can throw in 'owner' everywhere in these tests
+        await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety,  { from: accounts[0] });
 
         const seed = await instance.fetchSeedLots();
 
@@ -46,15 +52,22 @@ contract("SeedHub", function (accounts) {
     })
 
     describe("Add User", () => {
-      it("should successfully add a new user to verified users", async () => {
+      it("owner should successfully add a new user to verified users", async () => {
         // await instance.addUser(accounts[2], tokenBalance); this also works with  no other changes
-        await instance.addUser(newbie, tokenBalance);
+        // await instance.addUser(newbie, tokenBalance, { from: owner }); these all work. How's that possible??
+        await instance.addUser(accounts[2], tokenBalance, {from: accounts[0]} );
         const user = await instance.fetchUserBase();
 
         assert(user.length === 1, "user didn't show up after all");
       })
     })
 
-
+    describe("User Transaction", () => {
+      it("should successfully let a /*verified*/ user make a seed deposit or withdrawl", async () => {
+        await instance.userDeposit(lotGrams, seedClass, variety, { from: newbie} );
+        const txSuccess = seedLots.length; 
+        assert(seedLots.length =+ 1, "deposit was not successful")
+      })
+    })
 
   });

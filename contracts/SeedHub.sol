@@ -41,7 +41,7 @@ contract SeedHub is Ownable {
     uint expiryDate;
     string seedClass;
     string variety;
-    address owner;
+    // address owner;
   }
 
   // struct keeps track of user activity (need a data structure e.g. array) which we 
@@ -53,6 +53,13 @@ contract SeedHub is Ownable {
       uint tokenBalance;
   }
   
+  // modifier checks if user is in verifiedUsers mapping to 
+  // restrict user access to only some functions 
+  modifier verifiedUser(address _user) {
+    require(verifiedUsers[msg.sender] == true, "Caught, mister. We pinpoint potential trouble-makers...And neutralize them!");
+    _;
+  }
+
   // @notice function to let user deposit seeds and get paid tokens
   // @params lotGram(weight of user deposit), seedClass, variety (of said seedClass)
   // @params newTokenBalance (updated user token balance) 
@@ -60,7 +67,17 @@ contract SeedHub is Ownable {
   // @dev add 3 param values to SeedLot and push to seedLots array
   // @dev map caller address 
   // @dev call payment transfer function
-  // function userDeposit(uint _lotGram, string memory _seedClass, string memory _variety)
+  function userDeposit(uint _lotGrams, string memory _seedClass, string memory _variety) 
+    public verifiedUser returns (uint _newLotGrams){
+      fetchSeedLots(_seedClass, _variety);
+      SeedLot topUp = SeedLot ({
+        too tired to compute any more. and I've forgotten so much simple solidity and js stuff :(
+      })
+      // _newLotGrams += SeedLot.lotGrams;
+       
+    } 
+  
+  // function userDeposit(uint _lotGrams, string memory _seedClass, string memory _variety)
   //   public payable verifiedUser returns (uint _newTokenBalance) 
   //    getter function fetchSeedLots is already called below
   //    require(allowed userSeedDeposit = maxStockLimit - balanceGrams / 10 
@@ -93,12 +110,6 @@ contract SeedHub is Ownable {
 
 
   
-  // modifier checks if user is in verifiedUsers mapping to 
-  // restrict user access to only some functions 
-  // modifier verifiedUser(address _user) {
-  //   require(verifiedUsers[msg.sender] == true, "Caught, mister. We pinpoint potential trouble-makers...And neutralize them!");
-  //   _;
-  // }
 
      // @notice internal function called by onlyOwner to add new user 
   // @params add new user and newly allocated tokens to userInfo struct
@@ -110,8 +121,6 @@ contract SeedHub is Ownable {
         tokenBalance: _tokenBalance
       });
       usersInfo.push(newUser);
-      
-      // verifiedUsers[_user] = true;
       emit NewUserAdded(newbie, _tokenBalance);
       return verifiedUsers[newbie] = true;
   } 
@@ -148,8 +157,8 @@ contract SeedHub is Ownable {
       lotGrams: _lotGrams,
       expiryDate: _expiryDate,
       seedClass: _seedClass,
-      variety: _variety,
-      owner: msg.sender
+      variety: _variety
+      // owner: msg.sender
     });
     
     seedLots.push(seedLot);
