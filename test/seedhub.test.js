@@ -19,30 +19,30 @@ contract("SeedHub", function (accounts) {
       await SeedHub.deployed();
       return assert.isTrue(true);
   });
-
-   it("should confirm inheritance from Ownable.sol creating SeedHub owner", async () => {
-      await instance.owner(), owner;  // how on earth can it leave owner unwrapped like this???
-      return assert.strictEqual();
+  it("should confirm inheritance from Ownable.sol creating SeedHub owner", async () => {
+     await instance.owner(), owner;  // how on earth can it leave owner unwrapped like this???
+     return assert.strictEqual();
   });
 
+  
   const [owner, newbie] = accounts;
   const emptyAddress = "0x0000000000000000000000000000000000000000";
   
-    const shelfLife = 200;
-    const lotGrams = 10000;
-    const expiryDate = timestamp.fromDate("2030-12-31");
-    const seedClass = "lampshade";
-    const variety = "standing";
-    const tokenBalance = 26; 
-    let instance;
-
+  const shelfLife = 200;
+  const lotGrams = 10000;
+  const expiryDate = timestamp.fromDate("2030-12-31");
+  const seedClass = "lampshade";
+  const variety = "standing";
+  const tokenBalance = 26; 
+  let instance;
+  
   beforeEach(async () => {
     instance = await SeedHub.new();
   });
-
-    describe("Add seed", () => {
-      it("owner should successfully add a seed", async () => {
-        // I'm dubious about how easily we can throw in 'owner' everywhere in these tests
+  
+  describe("Add seed", () => {
+    it("owner should successfully add a seed", async () => {
+      // I'm dubious about how easily we can throw in 'owner' everywhere in these tests
         await instance.addSeed(shelfLife, lotGrams, expiryDate, seedClass, variety,  { from: accounts[0] });
 
         const seed = await instance.fetchSeedLots();
@@ -62,12 +62,12 @@ contract("SeedHub", function (accounts) {
       })
     })
 
-    describe("User Transaction", () => {
-      it("should successfully let a /*verified*/ user make a seed deposit or withdrawl", async () => {
-        await instance.userDeposit(lotGrams, seedClass, variety, { from: newbie} );
-        const txSuccess = seedLots.length; 
-        assert(seedLots.length =+ 1, "deposit was not successful")
-      })
-    })
+    // describe("User Transaction", () => {
+    //   it("should successfully let a /*verified*/ user make a seed deposit or withdrawl", async () => {
+    //     await instance.userDeposit(lotGrams, seedClass, variety, { from: newbie} );
+    //     const txSuccess = seedLots.length; 
+    //     assert(seedLots.length =+ 1, "deposit was not successful")
+    //   })
+    // })
 
   });

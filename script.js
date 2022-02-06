@@ -58,11 +58,11 @@ form.addEventListener('submit', e => {
   // the console log will output 'click'
   console.log('click')
   // So now we want to get what's the current value of an input.
-  console.log(e)
+  // console.log(e)
   // ^ This returns SubmitEvent { isTrusted: [Getter] }
   // 'submit', e <= see how we fed that event listener these params?
   // It's saying the event emitted was a submit
-  // console.log(e.target)
+  console.log(e.target)
   // ^ Console logs 
   // HTMLFormElement {
   // 0: HTMLFieldSetElement {},
@@ -70,7 +70,9 @@ form.addEventListener('submit', e => {
   // 2: HTMLInputElement {},
   // 3: HTMLInputElement {},
   // 4: HTMLInputElement {} }
-  // See how it's an object with 5 html elements, if you look at our form, there are 5 elements, the first one being the fieldset it's wrapped around, the last four being inputs.
+  // See how it's an object with 5 html elements, if you look
+  //  at our form, there are 5 elements, the first one being 
+  // the fieldset it's wrapped around, the last four being inputs.
   // Now remember how we gave everything a name?
   // console.log(e.target.seedName)
   // You might have a typo here v
@@ -87,19 +89,17 @@ form.addEventListener('submit', e => {
 
   // Start of our object
   const seedData = {
-    // Follow my lead here
     name: e.target.seedName.value,
-    // And try to type out the rest yourself. 
     variety: e.target.seedVariety.value,
     weight: e.target.seedWeightGrams.value
-    // can't be in here as this is an object
   }
   console.log(seedData)
+
 }) 
-// this will fire back as empty as it's out of scope of our function
-                                      // ^%$*&^(*^&%(^&%^(&$^&(^(&%(&*^)*&^&*(%)&)*^%)*&^)&*^)(^)^&)       
-                                      // **********@@@@ FUNCTION &*&*& !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// So this is the logic for your form to deposit seeds-- once you get the function for solidity ironed out
+// console.log here will fire back as empty as it's out of scope of our function
+//  need a FUNCTION piablo! 
+// So this is the logic for the form to deposit seeds-- 
+// once the function for solidity is ironed out
 // Why don't we ask for: window.addEventListener('load', function(event)) {
 
   // const seedBase = (seedData) => {

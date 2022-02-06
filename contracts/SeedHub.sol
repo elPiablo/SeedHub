@@ -10,12 +10,14 @@ contract SeedHub is Ownable {
   event NewUserAdded(address NewUser, uint userTokenBalance);
   
   // uint public userLotId; % 1000000
-  
+  // string public variety;
+
   // differentiates owner's (deployer) address from message sender(user)
   // address owner; this is already declared in Ownable.sol
   // differentiates user from owner
   // address user = msg.sender;
-  
+  // mapping for as a getter to varieties of seeds to check stock levels, etc
+  // mapping(string => SeedLot[]) public lotBase;
   // mapping so our functions can verify if user exists otherwise we send them to contract owner
   mapping(address => bool) public verifiedUsers;
   // mapping lets functions access user to their token balance/seedLots
@@ -35,14 +37,15 @@ contract SeedHub is Ownable {
   // struct with all info about a deposit
   // Still want a token balance of the user
   // I need an explainer on 'owner'
-  struct SeedLot {
-    uint shelfLife;
-    uint lotGrams;
-    uint expiryDate;
-    string seedClass;
-    string variety;
-    // address owner;
-  }
+
+     struct SeedLot {
+        uint shelfLife;
+        uint lotGrams;
+        uint expiryDate;
+        string seedClass;
+        string variety;
+        // address user;
+    }
 
   // struct keeps track of user activity (need a data structure e.g. array) which we 
   // still need to add, although we could do address/balance in a mapping
@@ -51,31 +54,32 @@ contract SeedHub is Ownable {
   struct UserInfo {
       address user;
       uint tokenBalance;
+
   }
   
   // modifier checks if user is in verifiedUsers mapping to 
   // restrict user access to only some functions 
-  modifier verifiedUser(address _user) {
-    require(verifiedUsers[msg.sender] == true, "Caught, mister. We pinpoint potential trouble-makers...And neutralize them!");
-    _;
-  }
+  // modifier verifiedUser(address user) {
+  //   require(verifiedUsers[user] == true, "Caught, mister. We pinpoint potential trouble-makers...And neutralize them!");
+  //   _;
+  // }
 
-  // @notice function to let user deposit seeds and get paid tokens
-  // @params lotGram(weight of user deposit), seedClass, variety (of said seedClass)
-  // @params newTokenBalance (updated user token balance) 
-  // @params need verifiedUser modifier
-  // @dev add 3 param values to SeedLot and push to seedLots array
-  // @dev map caller address 
-  // @dev call payment transfer function
-  function userDeposit(uint _lotGrams, string memory _seedClass, string memory _variety) 
-    public verifiedUser returns (uint _newLotGrams){
-      fetchSeedLots(_seedClass, _variety);
-      SeedLot topUp = SeedLot ({
-        too tired to compute any more. and I've forgotten so much simple solidity and js stuff :(
-      })
-      // _newLotGrams += SeedLot.lotGrams;
+  // // @notice function to let user deposit seeds and get paid tokens
+  // // @params lotGram(weight of user deposit), seedClass, variety (of said seedClass)
+  // // @params newTokenBalance (updated user token balance) 
+  // // @params need verifiedUser modifier
+  // // @dev add 3 param values to SeedLot and push to seedLots array
+  // // @dev map caller address 
+  // // @dev call payment transfer function
+  // function userDeposit(uint _lotGrams, string memory _seedClass, string memory variety) 
+  //   public verifiedUser(msg.sender) returns (uint _newLotGrams){
+  //     // fetchSeedLots(_seedClass, _variety);
+  //   uint presentGrams = userSeedLots.lotGrams;
+
+      
+  //     return _newLotGrams += presentGrams;
        
-    } 
+  //   } 
   
   // function userDeposit(uint _lotGrams, string memory _seedClass, string memory _variety)
   //   public payable verifiedUser returns (uint _newTokenBalance) 
@@ -104,12 +108,6 @@ contract SeedHub is Ownable {
   // function userWithdraw(uint _lotGram, string memory _seedClass, string memory _variety) 
   //   public payable verifiedUser returns (uint _newTokenBalance) 
 
-
-    
-
-
-
-  
 
      // @notice internal function called by onlyOwner to add new user 
   // @params add new user and newly allocated tokens to userInfo struct
@@ -150,6 +148,7 @@ contract SeedHub is Ownable {
     uint _expiryDate,
     string memory _seedClass,
     string memory _variety
+    // address user
   ) external onlyOwner {
 
     SeedLot memory seedLot = SeedLot({
@@ -158,7 +157,7 @@ contract SeedHub is Ownable {
       expiryDate: _expiryDate,
       seedClass: _seedClass,
       variety: _variety
-      // owner: msg.sender
+      // user: msg.sender
     });
     
     seedLots.push(seedLot);
@@ -192,10 +191,10 @@ contract SeedHub is Ownable {
 // @notice to make sure user deposit weight is within the allowed parameters
 // @params lotGram(user's weight deposit)
 // @dev checks lotGram against the below stockLimit algorithm
-//     modifier noGLut(lotGrams) owner {
-//         require(lotGrams =< ((maxStockLimit - balanceGrams) / depositDivisorArg e.g.  10);
-//         _;
-//     } 
+    // modifier noGLut(lotGrams) owner {
+    //     require(lotGrams =< ((maxStockLimit - balanceGrams) / depositDivisorArg e.g.  10);
+    //     _;
+    // } 
 
 // @notice make sure user doesn't withdraw more than is allowed
 // @params lotGram(user's weight withdrawl)
@@ -207,11 +206,20 @@ contract SeedHub is Ownable {
 
 // @notice modifier for user deposit function
 // @dev puts a timelock restriction on user deposit frequency
-//   modifier dontTakeThePiss() {
-//         require(user hasnt deposited =< time period against weight of previous deposits
-//            like coolOffPeriod in cryptozombies);
-//         _;
-//   } 
+  // modifier dontTakeThePiss() {
+  //       require(user hasnt deposited =< time period against weight of previous deposits
+  //          like coolOffPeriod in cryptozombies);
+  //       _;
+  // } 
+
+    // From SimpleBank.sol. Fallback function - Called if other functions don't match call or
+    // sent ether without data
+    // Typically, called when invalid data is sent
+    // Added so ether sent to this contract is reverted if the contract fails
+    // otherwise, the sender's money is transferred to contract
+    // function() external payable {
+    //     revert();
+    //   }
 
 // Don't I need this constructor function???
 // Or does this run automatically in the other contract?
